@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Weather Information - Hakeem Ellis Lab 1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: grey;
+    }
+    
+    .container {
+      width: 80%;
+      margin: 50px auto;
+      background-color: white;
+      padding: 30px;
+      box-shadow: 0px 0px 10px #CCC;
+      text-align: center;
+    }
+    
+    h1 {
+      margin-bottom: 40px;
+    }
+    
+    #weather-info {
+      font-size: 40px;
+      margin-bottom: 40px;
+    }
+    
+    #location {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Welcome to Hakeem's Lab 1</h1>
+    <img src="https://media.giphy.com/media/l4JyOCNEfXvVYEqB2/giphy.gif">
+    <p>Purpose of this lab and website is to showcase the level of understanding when calling
+        an API and building a website around it. This simple website showcases the current
+        weather based on your IP location in real-time. As such, on each ping and/or refresh, the information
+        will change depending the existing weather.
+    </p>
+</div>
+  <div class="container">
+    <h1>Current Weather Information</h1>
+    <div id="location"></div>
+    <div id="weather-text"></div>
+    <br>
+    <img id="weather-image"></img>
+    <div id="weather-info">Loading weather information...</div>
+  </div>
+
+  <script>
+    const apiKey = "8808d13062msh5d8020d2ac63481p198a9bjsna8215521a10e";
+    
+
+   fetch('https://ipapi.co/json/')
+  .then(response => response.json())
+  .then(location => {
+    // Once we have the location, we can use it in the API request
+    city = location.city;
+    apiUrl = "https://weatherapi-com.p.rapidapi.com/current.json?q=" + encodeURIComponent(city);
+    const options = {
+      method: "GET",
+      headers: {
+        "x-rapidapi-host": "weatherapi-com.p.rapidapi.com",
+        "x-rapidapi-key": apiKey
+      }
+    };
+  
+
+    fetch(apiUrl, options)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        const weatherInfo = document.getElementById("weather-info");
+        const location = document.getElementById("location");
+        const weatherText = document.getElementById("weather-text");
+        const weatherImage = document.getElementById("weather-image");
+        const weatherfind = `https:${data.current.condition.icon}`
+        weatherInfo.innerHTML = `Feeling like ${data.current.feelslike_c}°C`;
+        location.innerHTML = `<b>City:</b> ${data.location.name}`;
+        weatherText.innerHTML = `<h3>Forecast</h3> ${data.current.condition.text}`;
+        weatherImage.src = weatherfind;
+      })
+    
+      .catch(error => {
+        console.error(error);
+        const weatherInfo = document.getElementById("weather-info");
+        weatherInfo.innerHTML = "Unable to retrieve weather information.";
+      });
+
+    });
+  </script>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+
+</html>
